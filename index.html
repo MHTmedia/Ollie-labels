@@ -4,26 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Label Maker</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #F2F0EB;
+      --bg: #F0EEE9;
       --surface: #FFFFFF;
-      --surface-2: #F7F6F2;
-      --border: #E2DFD8;
-      --border-focus: #1A1A1A;
-      --text: #1A1A1A;
-      --text-2: #6B6860;
-      --text-3: #A8A49D;
-      --accent: #1A1A1A;
-      --accent-text: #FFFFFF;
-      --green: #2D6A4F;
-      --green-light: #EAF4EE;
-      --tag-bg: #EDEBE6;
-      --radius: 10px;
-      --radius-sm: 6px;
+      --surface-2: #F6F4F0;
+      --border: #DEDAD2;
+      --border-active: #1C1C1C;
+      --text: #1C1C1C;
+      --text-2: #6A6760;
+      --accent: #1C1C1C;
+      --accent-fg: #FFFFFF;
+      --green: #1F5C3A;
+      --green-fg: #FFFFFF;
+      --tag-bg: #ECEAE4;
+      --r: 8px;
+      --r-sm: 5px;
     }
 
     body {
@@ -31,185 +30,114 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 24px 16px 48px;
+      padding: 20px 16px 60px;
     }
 
     /* ── Header ── */
     .header {
-      max-width: 860px;
-      margin: 0 auto 24px;
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
+      max-width: 1280px;
+      margin: 0 auto 20px;
     }
 
     .header h1 {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 600;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.2px;
     }
 
-    .header span {
+    .header p {
       font-size: 12px;
-      color: var(--text-3);
+      color: var(--text-2);
+      margin-top: 2px;
       font-family: 'DM Mono', monospace;
+    }
+
+    /* ── Two-column layout ── */
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    /* Settings panel — fixed width */
+    .settings-col {
+      flex: 0 0 360px;
+      min-width: 0;
+    }
+
+    /* Preview panel — fills remaining space */
+    .preview-col {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* On narrow screens, stack vertically */
+    @media (max-width: 720px) {
+      .layout { flex-direction: column; }
+      .settings-col { flex: none; width: 100%; }
+      .preview-col { width: 100%; }
     }
 
     /* ── Card ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      max-width: 860px;
-      margin: 0 auto 14px;
+      border-radius: var(--r);
       overflow: hidden;
+      width: 100%;
     }
 
-    .card-section {
-      padding: 20px 22px;
+    .section {
+      padding: 16px 18px;
       border-bottom: 1px solid var(--border);
     }
 
-    .card-section:last-child { border-bottom: none; }
+    .section:last-child { border-bottom: none; }
 
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .section-tag {
-      font-size: 10px;
+    .section-label {
+      font-size: 9px;
       font-weight: 600;
-      letter-spacing: 0.8px;
+      letter-spacing: 1px;
       text-transform: uppercase;
       color: var(--text-2);
       background: var(--tag-bg);
-      padding: 3px 8px;
-      border-radius: 4px;
+      display: inline-block;
+      padding: 3px 7px;
+      border-radius: 3px;
+      margin-bottom: 12px;
     }
 
-    /* ── Layout Toggle ── */
-    .layout-pills {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
+    .row { display: flex; flex-direction: column; gap: 10px; }
 
-    .layout-pill {
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: border-color 0.15s, background 0.15s;
-      -webkit-tap-highlight-color: transparent;
-      background: var(--surface);
-    }
-
-    .layout-pill:hover { border-color: #C0BDB6; }
-
-    .layout-pill.active {
-      border-color: var(--accent);
-      background: var(--surface-2);
-    }
-
-    .layout-pill.active .pill-check {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .layout-pill.active .pill-check::after {
-      opacity: 1;
-    }
-
-    .pill-check {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 1.5px solid var(--border);
-      flex-shrink: 0;
-      position: relative;
-      transition: background 0.15s, border-color 0.15s;
-    }
-
-    .pill-check::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: white;
-      opacity: 0;
-      transition: opacity 0.15s;
-    }
-
-    .pill-label { flex: 1; }
-    .pill-title { font-size: 13px; font-weight: 600; color: var(--text); }
-    .pill-sub { font-size: 11px; color: var(--text-3); margin-top: 1px; }
-
-    .pill-grid {
-      display: flex;
-      gap: 2px;
-      flex-shrink: 0;
-    }
-
-    .pill-grid-col {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .pill-grid-cell {
-      width: 7px;
-      height: 5px;
-      background: var(--border);
-      border-radius: 1px;
-    }
-
-    .layout-pill.active .pill-grid-cell { background: #AAA; }
-
-    /* ── Field Grid ── */
-    .field-grid {
+    .row-inline {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
 
-    @media (min-width: 560px) {
-      .field-grid { grid-template-columns: repeat(3, 1fr); }
-    }
+    .field { display: flex; flex-direction: column; gap: 5px; }
 
-    @media (min-width: 720px) {
-      .field-grid { grid-template-columns: repeat(4, 1fr); }
-    }
-
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field.span-2 { grid-column: span 2; }
-    .field.full { grid-column: 1 / -1; }
-
-    .field > label {
+    .field-label {
       font-size: 11px;
       font-weight: 500;
       color: var(--text-2);
-      letter-spacing: 0.1px;
     }
 
-    .field input,
-    .field select {
+    input[type="text"],
+    input[type="date"],
+    select {
       width: 100%;
       height: 40px;
-      padding: 0 12px;
+      padding: 0 11px;
       border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
+      border-radius: var(--r-sm);
       font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text);
       background: var(--surface);
       outline: none;
@@ -218,39 +146,37 @@
       appearance: none;
     }
 
-    .field input:focus,
-    .field select:focus {
-      border-color: var(--border-focus);
-    }
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    select:focus { border-color: var(--border-active); }
 
-    .field select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B6860' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236A6760' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 32px;
+      background-position: right 11px center;
+      padding-right: 30px;
       cursor: pointer;
     }
 
-    /* Number stepper */
+    /* Stepper */
     .stepper {
       display: flex;
-      align-items: center;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
       height: 40px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      overflow: hidden;
       transition: border-color 0.15s;
     }
 
-    .stepper:focus-within { border-color: var(--border-focus); }
+    .stepper:focus-within { border-color: var(--border-active); }
 
-    .stepper button {
-      width: 36px;
+    .stepper-btn {
+      width: 38px;
       height: 100%;
       border: none;
       background: var(--surface-2);
       color: var(--text);
-      font-size: 16px;
+      font-size: 17px;
       cursor: pointer;
       flex-shrink: 0;
       display: flex;
@@ -258,11 +184,11 @@
       justify-content: center;
       -webkit-tap-highlight-color: transparent;
       transition: background 0.1s;
-      padding: 0;
-      font-weight: 400;
+      font-weight: 300;
+      user-select: none;
     }
 
-    .stepper button:active { background: var(--border); }
+    .stepper-btn:active { background: var(--border); }
 
     .stepper input {
       flex: 1;
@@ -274,38 +200,44 @@
       text-align: center;
       font-family: 'DM Mono', monospace;
       font-size: 14px;
-      padding: 0 4px;
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      min-width: 0;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
-    .stepper input:focus { border-color: var(--border); outline: none; }
+    .stepper input::-webkit-outer-spin-button,
+    .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .stepper input[type=number] { -moz-appearance: textfield; }
 
-    /* Toggle switches */
-    .toggle-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
+    /* Toggle */
+    .toggle-field { display: flex; flex-direction: column; gap: 5px; }
 
-    .toggle-row {
+    .toggle-wrap {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 12px;
+      height: 40px;
+      padding: 0 12px;
       background: var(--surface-2);
       border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
+      border-radius: var(--r-sm);
       cursor: pointer;
-      gap: 8px;
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
-    .toggle-row span {
+    .toggle-wrap input { display: none; }
+
+    .toggle-wrap .toggle-label {
       font-size: 13px;
-      color: var(--text);
       font-weight: 500;
+      color: var(--text);
     }
 
-    .toggle-switch {
+    .toggle-knob {
       width: 36px;
       height: 20px;
       background: var(--border);
@@ -315,7 +247,7 @@
       transition: background 0.2s;
     }
 
-    .toggle-switch::after {
+    .toggle-knob::after {
       content: '';
       position: absolute;
       top: 3px;
@@ -325,32 +257,24 @@
       background: white;
       border-radius: 50%;
       transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
     }
 
-    .toggle-row.on .toggle-switch {
-      background: var(--accent);
-    }
+    .toggle-wrap.on .toggle-knob { background: var(--accent); }
+    .toggle-wrap.on .toggle-knob::after { transform: translateX(16px); }
 
-    .toggle-row.on .toggle-switch::after {
-      transform: translateX(16px);
-    }
-
-    /* Hidden checkboxes */
-    .toggle-row input { display: none; }
-
-    /* ── Action buttons ── */
-    .actions {
+    /* Buttons */
+    .btn-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      padding: 20px 22px;
+      padding: 16px 18px;
     }
 
     .btn {
       height: 44px;
       border: none;
-      border-radius: var(--radius-sm);
+      border-radius: var(--r-sm);
       font-family: 'DM Sans', sans-serif;
       font-size: 14px;
       font-weight: 600;
@@ -358,96 +282,61 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
       -webkit-tap-highlight-color: transparent;
-      transition: opacity 0.15s, transform 0.1s;
+      transition: transform 0.1s;
     }
 
-    .btn:active { transform: scale(0.98); }
+    .btn:active { transform: scale(0.97); }
+    .btn-generate { background: var(--accent); color: var(--accent-fg); }
+    .btn-print { background: var(--green); color: var(--green-fg); }
 
-    .btn-primary {
-      background: var(--accent);
-      color: var(--accent-text);
+    /* ── Preview ── */
+    /* Wrapper that collapses to scaled height */
+    .page-scaler-outer {
+      width: 100%;
+      position: relative;
+      /* height set by JS */
     }
 
-    .btn-print {
-      background: var(--green);
-      color: white;
+    /* True-size scaler — transforms down to fit preview column */
+    .page-scaler {
+      width: 816px;  /* 8.5in @ 96dpi */
+      height: 1056px; /* 11in @ 96dpi */
+      transform-origin: top left;
+      position: absolute;
+      top: 0;
+      left: 0;
+      /* transform set by JS */
     }
 
-    /* ── Summary pill ── */
-    .summary {
-      max-width: 860px;
-      margin: 0 auto 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .summary-chip {
-      font-size: 11px;
-      font-family: 'DM Mono', monospace;
-      color: var(--text-2);
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      border-radius: 20px;
-    }
-
-    .summary-chip.hidden { display: none; }
-
-    /* ── Sheet preview ── */
-    .sheet-scroll {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      max-width: 860px;
-      margin: 0 auto;
-    }
-
+    /* True printable page */
     .page {
       width: 8.5in;
       height: 11in;
       background: white;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      flex-shrink: 0;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
       border-radius: 2px;
+      position: relative;
+      display: grid;
+      place-items: center;
     }
 
-    .guide-a {
+    .guide {
       position: absolute;
-      width: 6.5in;
-      height: 11in;
-      border: 1px dashed #DDD;
+      left: 1in;
+      right: 1in;
+      top: 0;
+      bottom: 0;
+      border-left: 1px dashed #E2DFD8;
+      border-right: 1px dashed #E2DFD8;
       pointer-events: none;
     }
 
-    .guide-b {
-      position: absolute;
-      width: 8.5in;
-      height: 10in;
-      border: 1px dashed #DDD;
-      pointer-events: none;
-    }
-
-    .label-grid-a {
+    .label-grid {
       width: 6.5in;
       height: 11in;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: repeat(10, 1fr);
-      overflow: hidden;
-    }
-
-    .label-grid-b {
-      width: 8.5in;
-      height: 10in;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(10, 1fr);
       overflow: hidden;
     }
@@ -457,18 +346,18 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 4px 8px;
+      padding: 4px 10px;
       text-align: center;
       line-height: 1.35;
     }
 
-    .label .name { color: #111; }
-    .label .date { color: #333; margin-top: 2px; }
-    .label .empty { font-size: 10px; color: #CCC; font-family: 'DM Mono', monospace; }
+    .label .lname { color: #111; }
+    .label .ldate { color: #333; margin-top: 2px; }
+    .label .empty { font-size: 9px; color: #D5D2CC; font-family: 'DM Mono', monospace; }
 
     .sheet-divider {
-      max-width: 860px;
-      margin: 16px auto;
+      width: 100%;
+      margin: 12px 0;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -485,18 +374,47 @@
     .sheet-divider span {
       font-size: 11px;
       font-family: 'DM Mono', monospace;
-      color: var(--text-3);
+      color: #AEABA4;
       white-space: nowrap;
     }
 
     /* ── Print ── */
     @media print {
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
       body { margin: 0; padding: 0; background: white; }
-      .header, .card, .summary, .sheet-divider { display: none; }
+
+      .header,
+      .settings-col,
+      .sheet-divider { display: none !important; }
+
+      .layout {
+        display: block;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .preview-col {
+        display: block;
+        width: 100%;
+      }
 
       @page { size: 8.5in 11in; margin: 0; }
 
-      .sheet-scroll { overflow: visible; }
+      .page-scaler-outer {
+        width: 8.5in !important;
+        height: 11in !important;
+        position: relative;
+        overflow: visible;
+      }
+
+      .page-scaler {
+        width: 8.5in !important;
+        height: 11in !important;
+        transform: none !important;
+        position: relative;
+      }
 
       .page {
         width: 8.5in;
@@ -505,17 +423,14 @@
         box-shadow: none;
         border-radius: 0;
         page-break-after: always;
+        display: grid;
+        place-items: center;
       }
 
       .page:last-child { page-break-after: avoid; }
-      .guide-a, .guide-b { display: none; }
+      .guide { display: none; }
       .label { border: none; }
       .label .empty { display: none; }
-
-      .page.layout-b {
-        padding: 0.5in 0;
-        align-items: flex-start;
-      }
     }
   </style>
 </head>
@@ -523,278 +438,256 @@
 
   <div class="header">
     <h1>Label Maker</h1>
-    <span>Print-ready · 8.5×11</span>
+    <p>2 col × 10 row · 8.5×11 print · feed 6.5×11 sheet</p>
   </div>
 
-  <div class="card">
+  <div class="layout">
 
-    <!-- Layout -->
-    <div class="card-section">
-      <div class="section-header">
-        <span class="section-tag">Layout</span>
-      </div>
-      <div class="layout-pills">
-        <div class="layout-pill active" id="btnA" onclick="setLayout('a')">
-          <div class="pill-check"></div>
-          <div class="pill-label">
-            <div class="pill-title">2 × 10</div>
-            <div class="pill-sub">6.5×11 centered · 20 per sheet</div>
-          </div>
-          <div class="pill-grid">
-            <div class="pill-grid-col">
-              <div class="pill-grid-cell"></div><div class="pill-grid-cell"></div>
-              <div class="pill-grid-cell"></div><div class="pill-grid-cell"></div>
-              <div class="pill-grid-cell"></div>
+    <!-- ── Settings ── -->
+    <div class="settings-col">
+      <div class="card">
+
+        <!-- Content -->
+        <div class="section">
+          <div class="section-label">Content</div>
+          <div class="row">
+            <div class="field">
+              <div class="field-label">Person's Name</div>
+              <input type="text" id="personName" placeholder="e.g. John Smith" />
             </div>
-            <div class="pill-grid-col">
-              <div class="pill-grid-cell"></div><div class="pill-grid-cell"></div>
-              <div class="pill-grid-cell"></div><div class="pill-grid-cell"></div>
-              <div class="pill-grid-cell"></div>
+            <div class="row-inline">
+              <div class="toggle-field">
+                <div class="field-label">Bold Name</div>
+                <label class="toggle-wrap on" id="twNameBold" onclick="tog('nameBold','twNameBold')">
+                  <input type="checkbox" id="nameBold" checked />
+                  <span class="toggle-label">Bold</span>
+                  <div class="toggle-knob"></div>
+                </label>
+              </div>
+              <div class="toggle-field">
+                <div class="field-label">All Caps</div>
+                <label class="toggle-wrap" id="twCaps" onclick="tog('allCaps','twCaps')">
+                  <input type="checkbox" id="allCaps" />
+                  <span class="toggle-label">All Caps</span>
+                  <div class="toggle-knob"></div>
+                </label>
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="layout-pill" id="btnB" onclick="setLayout('b')">
-          <div class="pill-check"></div>
-          <div class="pill-label">
-            <div class="pill-title">3 × 10</div>
-            <div class="pill-sub">8.5×11 · 0.5" margins · 30 per sheet</div>
-          </div>
-          <div class="pill-grid">
-            <div class="pill-grid-col">
-              <div class="pill-grid-cell"></div><div class="pill-grid-cell"></div>
-              <div class="pill-grid-cell"></div><div class="pill-grid-cell"></div>
-              <div class="pill-grid-cell"></div>
+            <div style="height:2px;"></div>
+            <div class="field">
+              <div class="field-label">Start Date</div>
+              <input type="date" id="startDate" />
             </div>
-            <div class="pill-grid-col">
-              <div class="pill-grid-cell"></div><div class="pill-grid-cell"></div>
-              <div class="pill-grid-cell"></div><div class="pill-grid-cell"></div>
-              <div class="pill-grid-cell"></div>
-            </div>
-            <div class="pill-grid-col">
-              <div class="pill-grid-cell"></div><div class="pill-grid-cell"></div>
-              <div class="pill-grid-cell"></div><div class="pill-grid-cell"></div>
-              <div class="pill-grid-cell"></div>
+            <div class="toggle-field">
+              <div class="field-label">Bold Date</div>
+              <label class="toggle-wrap" id="twDateBold" onclick="tog('dateBold','twDateBold')">
+                <input type="checkbox" id="dateBold" />
+                <span class="toggle-label">Bold</span>
+                <div class="toggle-knob"></div>
+              </label>
             </div>
           </div>
         </div>
+
+        <!-- Schedule -->
+        <div class="section">
+          <div class="section-label">Schedule</div>
+          <div class="row">
+            <div class="row-inline">
+              <div class="field">
+                <div class="field-label">Repeat per Date</div>
+                <div class="stepper">
+                  <button class="stepper-btn" onclick="step('repeatCount',-1)">−</button>
+                  <input type="number" id="repeatCount" value="5" min="1" max="30" />
+                  <button class="stepper-btn" onclick="step('repeatCount',1)">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <div class="field-label">No. of Sheets</div>
+                <div class="stepper">
+                  <button class="stepper-btn" onclick="step('numSheets',-1)">−</button>
+                  <input type="number" id="numSheets" value="1" min="1" max="20" />
+                  <button class="stepper-btn" onclick="step('numSheets',1)">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="toggle-field">
+              <div class="field-label">Weekends</div>
+              <label class="toggle-wrap" id="twWeekends" onclick="tog('inclWeekends','twWeekends')">
+                <input type="checkbox" id="inclWeekends" />
+                <span class="toggle-label">Include weekends</span>
+                <div class="toggle-knob"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="section">
+          <div class="section-label">Typography</div>
+          <div class="row">
+            <div class="field">
+              <div class="field-label">Font</div>
+              <select id="fontFamily">
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Helvetica Neue', Helvetica, sans-serif">Helvetica</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="'Times New Roman', serif">Times New Roman</option>
+                <option value="'Courier New', monospace">Courier New</option>
+                <option value="Verdana, sans-serif">Verdana</option>
+                <option value="Tahoma, sans-serif">Tahoma</option>
+                <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+              </select>
+            </div>
+            <div class="row-inline">
+              <div class="field">
+                <div class="field-label">Name Size (pt)</div>
+                <div class="stepper">
+                  <button class="stepper-btn" onclick="step('nameSize',-1)">−</button>
+                  <input type="number" id="nameSize" value="13" min="6" max="36" />
+                  <button class="stepper-btn" onclick="step('nameSize',1)">+</button>
+                </div>
+              </div>
+              <div class="field">
+                <div class="field-label">Date Size (pt)</div>
+                <div class="stepper">
+                  <button class="stepper-btn" onclick="step('dateSize',-1)">−</button>
+                  <input type="number" id="dateSize" value="11" min="6" max="36" />
+                  <button class="stepper-btn" onclick="step('dateSize',1)">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="btn-row">
+          <button class="btn btn-generate" onclick="generate()">Generate Labels</button>
+          <button class="btn btn-print" onclick="window.print()">Print</button>
+        </div>
+
       </div>
     </div>
 
-    <!-- Content -->
-    <div class="card-section">
-      <div class="section-header">
-        <span class="section-tag">Content</span>
-      </div>
-      <div class="field-grid">
-        <div class="field full">
-          <label>Person's Name</label>
-          <input type="text" id="personName" placeholder="e.g. John Smith" />
-        </div>
-        <div class="field">
-          <label>Start Date</label>
-          <input type="date" id="startDate" />
-        </div>
-        <div class="field">
-          <label>Repeat per Date</label>
-          <div class="stepper">
-            <button onclick="step('repeatCount',-1)">−</button>
-            <input type="number" id="repeatCount" value="5" min="1" max="30" />
-            <button onclick="step('repeatCount',1)">+</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>Number of Sheets</label>
-          <div class="stepper">
-            <button onclick="step('numSheets',-1)">−</button>
-            <input type="number" id="numSheets" value="1" min="1" max="20" />
-            <button onclick="step('numSheets',1)">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="toggle-grid" style="margin-top:12px;">
-        <label class="toggle-row" id="toggleWeekends" onclick="toggleCheck('includeWeekends','toggleWeekends')">
-          <input type="checkbox" id="includeWeekends" />
-          <span>Include weekends</span>
-          <div class="toggle-switch"></div>
-        </label>
-        <label class="toggle-row" id="toggleCaps" onclick="toggleCheck('allCapsName','toggleCaps')">
-          <input type="checkbox" id="allCapsName" />
-          <span>All caps name</span>
-          <div class="toggle-switch"></div>
-        </label>
-      </div>
-    </div>
-
-    <!-- Typography -->
-    <div class="card-section">
-      <div class="section-header">
-        <span class="section-tag">Typography</span>
-      </div>
-      <div class="field-grid">
-        <div class="field span-2">
-          <label>Font</label>
-          <select id="fontFamily">
-            <option value="Arial, sans-serif">Arial</option>
-            <option value="'Helvetica Neue', Helvetica, sans-serif">Helvetica</option>
-            <option value="Georgia, serif">Georgia</option>
-            <option value="'Times New Roman', serif">Times New Roman</option>
-            <option value="'Courier New', monospace">Courier New</option>
-            <option value="Verdana, sans-serif">Verdana</option>
-            <option value="Tahoma, sans-serif">Tahoma</option>
-            <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Name Size (pt)</label>
-          <div class="stepper">
-            <button onclick="step('nameSize',-1)">−</button>
-            <input type="number" id="nameSize" value="13" min="6" max="36" />
-            <button onclick="step('nameSize',1)">+</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>Date Size (pt)</label>
-          <div class="stepper">
-            <button onclick="step('dateSize',-1)">−</button>
-            <input type="number" id="dateSize" value="11" min="6" max="36" />
-            <button onclick="step('dateSize',1)">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="toggle-grid" style="margin-top:12px;">
-        <label class="toggle-row on" id="toggleNameBold" onclick="toggleCheck('nameBold','toggleNameBold')">
-          <input type="checkbox" id="nameBold" checked />
-          <span>Bold name</span>
-          <div class="toggle-switch"></div>
-        </label>
-        <label class="toggle-row" id="toggleDateBold" onclick="toggleCheck('dateBold','toggleDateBold')">
-          <input type="checkbox" id="dateBold" />
-          <span>Bold date</span>
-          <div class="toggle-switch"></div>
-        </label>
-      </div>
-    </div>
-
-    <!-- Actions -->
-    <div class="actions">
-      <button class="btn btn-primary" onclick="generateLabels()">Generate Labels</button>
-      <button class="btn btn-print" onclick="window.print()">Print</button>
-    </div>
+    <!-- ── Preview ── -->
+    <div class="preview-col" id="sheetsContainer"></div>
 
   </div>
-
-  <!-- Summary chips -->
-  <div class="summary" id="summaryRow" style="display:none;">
-  </div>
-
-  <div id="sheetsContainer"></div>
 
   <script>
-    let currentLayout = 'a';
+    function getPreviewWidth() {
+      const col = document.querySelector('.preview-col');
+      return col ? col.offsetWidth : 400;
+    }
 
-    function setLayout(layout) {
-      currentLayout = layout;
-      document.getElementById('btnA').classList.toggle('active', layout === 'a');
-      document.getElementById('btnB').classList.toggle('active', layout === 'b');
-      initEmpty();
+    function applyScales() {
+      const w = getPreviewWidth();
+      const scale = w / 816;
+      document.querySelectorAll('.page-scaler').forEach(el => {
+        el.style.transform = `scale(${scale})`;
+      });
+      document.querySelectorAll('.page-scaler-outer').forEach(el => {
+        el.style.height = Math.round(1056 * scale) + 'px';
+      });
+    }
+
+    window.addEventListener('resize', applyScales);
+
+    function tog(checkId, wrapId) {
+      const cb = document.getElementById(checkId);
+      const wrap = document.getElementById(wrapId);
+      cb.checked = !cb.checked;
+      wrap.classList.toggle('on', cb.checked);
     }
 
     function step(id, delta) {
       const el = document.getElementById(id);
       const min = parseInt(el.min) || 1;
       const max = parseInt(el.max) || 999;
-      const val = Math.min(max, Math.max(min, (parseInt(el.value) || 0) + delta));
-      el.value = val;
+      el.value = Math.min(max, Math.max(min, (parseInt(el.value) || 0) + delta));
     }
 
-    function toggleCheck(checkId, rowId) {
-      const cb = document.getElementById(checkId);
-      const row = document.getElementById(rowId);
-      cb.checked = !cb.checked;
-      row.classList.toggle('on', cb.checked);
-    }
-
-    function nextDay(date, includeWeekends) {
+    function advanceDate(date, inclWeekends) {
       const d = new Date(date);
       d.setDate(d.getDate() + 1);
-      if (!includeWeekends) {
+      if (!inclWeekends) {
         while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
       }
       return d;
     }
 
-    function isWeekend(date) { return date.getDay() === 0 || date.getDay() === 6; }
+    function isWeekend(d) { return d.getDay() === 0 || d.getDay() === 6; }
 
-    function formatDate(date) {
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const dd = String(date.getDate()).padStart(2, '0');
-      const yy = String(date.getFullYear()).slice(-2);
-      return `${mm}/${dd}/${yy}`;
+    function fmt(date) {
+      return String(date.getMonth()+1).padStart(2,'0') + '/' +
+             String(date.getDate()).padStart(2,'0') + '/' +
+             String(date.getFullYear()).slice(-2);
     }
 
-    function escapeHTML(str) {
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    function esc(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    function labelsPerSheet() { return currentLayout === 'a' ? 20 : 30; }
+    function makePage(labelEls) {
+      const outer = document.createElement('div');
+      outer.className = 'page-scaler-outer';
 
-    function buildPage(labelEls, layout) {
-      const scroll = document.createElement('div');
-      scroll.className = 'sheet-scroll';
+      const scaler = document.createElement('div');
+      scaler.className = 'page-scaler';
 
       const page = document.createElement('div');
-      page.className = `page layout-${layout}`;
+      page.className = 'page';
 
       const guide = document.createElement('div');
-      guide.className = layout === 'a' ? 'guide-a' : 'guide-b';
+      guide.className = 'guide';
       page.appendChild(guide);
 
       const grid = document.createElement('div');
-      grid.className = layout === 'a' ? 'label-grid-a' : 'label-grid-b';
+      grid.className = 'label-grid';
       labelEls.forEach(el => grid.appendChild(el));
       page.appendChild(grid);
 
-      scroll.appendChild(page);
-      return scroll;
+      scaler.appendChild(page);
+      outer.appendChild(scaler);
+      return outer;
     }
 
-    function generateLabels() {
-      const rawName     = document.getElementById('personName').value.trim();
-      const rawDate     = document.getElementById('startDate').value;
-      const repeat      = parseInt(document.getElementById('repeatCount').value) || 5;
-      const incWeekends = document.getElementById('includeWeekends').checked;
-      const allCaps     = document.getElementById('allCapsName').checked;
-      const numSheets   = parseInt(document.getElementById('numSheets').value) || 1;
-      const fontFamily  = document.getElementById('fontFamily').value;
-      const nameSize    = document.getElementById('nameSize').value;
-      const dateSize    = document.getElementById('dateSize').value;
-      const nameBold    = document.getElementById('nameBold').checked;
-      const dateBold    = document.getElementById('dateBold').checked;
+    function generate() {
+      const rawName      = document.getElementById('personName').value.trim();
+      const rawDate      = document.getElementById('startDate').value;
+      const repeat       = Math.max(1, parseInt(document.getElementById('repeatCount').value) || 5);
+      const numSheets    = Math.max(1, parseInt(document.getElementById('numSheets').value) || 1);
+      const inclWeekends = document.getElementById('inclWeekends').checked;
+      const allCaps      = document.getElementById('allCaps').checked;
+      const fontFamily   = document.getElementById('fontFamily').value;
+      const nameSize     = parseInt(document.getElementById('nameSize').value) || 13;
+      const dateSize     = parseInt(document.getElementById('dateSize').value) || 11;
+      const nameBold     = document.getElementById('nameBold').checked;
+      const dateBold     = document.getElementById('dateBold').checked;
 
       if (!rawName || !rawDate) { alert('Please enter a name and start date.'); return; }
 
       const name = allCaps ? rawName.toUpperCase() : rawName;
       const [yr, mo, dy] = rawDate.split('-').map(Number);
-      let currentDate = new Date(yr, mo - 1, dy);
+      let cur = new Date(yr, mo - 1, dy);
 
-      if (!incWeekends) {
-        while (isWeekend(currentDate)) currentDate.setDate(currentDate.getDate() + 1);
+      if (!inclWeekends) {
+        while (isWeekend(cur)) cur.setDate(cur.getDate() + 1);
       }
 
-      const perSheet    = labelsPerSheet();
-      const totalLabels = perSheet * numSheets;
-      const container   = document.getElementById('sheetsContainer');
+      const perSheet = 20;
+      const total = perSheet * numSheets;
+      const container = document.getElementById('sheetsContainer');
       container.innerHTML = '';
 
-      // Build full date sequence across all sheets
       const dates = [];
-      let countOnDate = 0;
-      for (let i = 0; i < totalLabels; i++) {
-        dates.push(new Date(currentDate));
-        countOnDate++;
-        if (countOnDate >= repeat) {
-          currentDate = nextDay(currentDate, incWeekends);
-          countOnDate = 0;
+      let count = 0;
+      for (let i = 0; i < total; i++) {
+        dates.push(new Date(cur));
+        count++;
+        if (count >= repeat) {
+          cur = advanceDate(cur, inclWeekends);
+          count = 0;
         }
       }
 
@@ -802,55 +695,40 @@
         if (s > 0) {
           const div = document.createElement('div');
           div.className = 'sheet-divider';
-          div.innerHTML = `<span>Sheet ${s + 1} of ${numSheets}</span>`;
+          div.innerHTML = `<span>Sheet ${s+1} of ${numSheets}</span>`;
           container.appendChild(div);
         }
 
-        const labelEls = [];
+        const els = [];
         for (let i = 0; i < perSheet; i++) {
           const d = dates[s * perSheet + i];
           const el = document.createElement('div');
           el.className = 'label';
-          el.innerHTML = `
-            <div class="name" style="font-family:${fontFamily};font-size:${nameSize}pt;font-weight:${nameBold?'700':'400'};">${escapeHTML(name)}</div>
-            <div class="date" style="font-family:${fontFamily};font-size:${dateSize}pt;font-weight:${dateBold?'700':'400'};">${formatDate(d)}</div>
-          `;
-          labelEls.push(el);
+          el.innerHTML =
+            `<div class="lname" style="font-family:${fontFamily};font-size:${nameSize}pt;font-weight:${nameBold?700:400};">${esc(name)}</div>` +
+            `<div class="ldate" style="font-family:${fontFamily};font-size:${dateSize}pt;font-weight:${dateBold?700:400};">${fmt(d)}</div>`;
+          els.push(el);
         }
 
-        container.appendChild(buildPage(labelEls, currentLayout));
+        container.appendChild(makePage(els));
       }
 
-      // Summary
-      const summaryRow = document.getElementById('summaryRow');
-      summaryRow.style.display = 'flex';
-      const uniqueDates = [...new Set(dates.map(d => formatDate(d)))];
-      summaryRow.innerHTML = `
-        <div class="summary-chip">${numSheets} sheet${numSheets>1?'s':''}</div>
-        <div class="summary-chip">${totalLabels} labels</div>
-        <div class="summary-chip">${repeat} per date</div>
-        <div class="summary-chip">${uniqueDates.length} dates</div>
-        <div class="summary-chip">${formatDate(dates[0])} → ${formatDate(dates[totalLabels-1])}</div>
-        <div class="summary-chip">${incWeekends ? 'incl. weekends' : 'weekdays only'}</div>
-      `;
+      applyScales();
     }
 
-    function initEmpty() {
-      const container = document.getElementById('sheetsContainer');
-      container.innerHTML = '';
-      document.getElementById('summaryRow').style.display = 'none';
-      const perSheet = labelsPerSheet();
-      const labelEls = [];
-      for (let i = 0; i < perSheet; i++) {
+    // Init empty preview
+    (function() {
+      const els = [];
+      for (let i = 0; i < 20; i++) {
         const el = document.createElement('div');
         el.className = 'label';
-        el.innerHTML = `<div class="empty">${i + 1}</div>`;
-        labelEls.push(el);
+        el.innerHTML = `<div class="empty">${i+1}</div>`;
+        els.push(el);
       }
-      container.appendChild(buildPage(labelEls, currentLayout));
-    }
-
-    initEmpty();
+      document.getElementById('sheetsContainer').appendChild(makePage(els));
+      // Wait for layout to settle before scaling
+      requestAnimationFrame(() => applyScales());
+    })();
   </script>
 
 </body>
