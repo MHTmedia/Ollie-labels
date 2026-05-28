@@ -152,6 +152,89 @@
       cursor: pointer;
     }
 
+    /* Layout pills */
+    .layout-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .layout-pill {
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-sm);
+      padding: 10px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      transition: border-color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .layout-pill:hover { border-color: #C5C1B8; }
+
+    .layout-pill.active {
+      border-color: var(--accent);
+      background: var(--surface-2);
+    }
+
+    .pill-radio {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      flex-shrink: 0;
+      position: relative;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .layout-pill.active .pill-radio {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .pill-radio::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: white;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .layout-pill.active .pill-radio::after { opacity: 1; }
+
+    .pill-text { flex: 1; }
+    .pill-title { font-size: 12px; font-weight: 600; color: var(--text); }
+    .pill-sub { font-size: 10px; color: var(--text-2); margin-top: 1px; }
+
+    .pill-icon {
+      display: flex;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .pill-icon-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .pill-icon-cell {
+      width: 6px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 1px;
+    }
+
+    .layout-pill.active .pill-icon-cell { background: #999; }
+
+    /* Stepper */
     .stepper {
       display: flex;
       height: 40px;
@@ -205,6 +288,7 @@
     .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; }
     .stepper input[type=number] { -moz-appearance: textfield; }
 
+    /* Toggle */
     .toggle-field { display: flex; flex-direction: column; gap: 5px; }
 
     .toggle-wrap {
@@ -242,10 +326,8 @@
     .toggle-knob::after {
       content: '';
       position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 14px;
-      height: 14px;
+      top: 3px; left: 3px;
+      width: 14px; height: 14px;
       background: white;
       border-radius: 50%;
       transition: transform 0.2s;
@@ -255,6 +337,7 @@
     .toggle-wrap.on .toggle-knob { background: var(--accent); }
     .toggle-wrap.on .toggle-knob::after { transform: translateX(16px); }
 
+    /* Buttons */
     .btn-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -307,22 +390,42 @@
       place-items: center;
     }
 
-    .guide {
+    /* Layout A guide: 6.5in centered (1in each side) */
+    .guide-a {
       position: absolute;
-      left: 1in;
-      right: 1in;
-      top: 0;
-      bottom: 0;
+      left: 1in; right: 1in;
+      top: 0; bottom: 0;
       border-left: 1px dashed #E2DFD8;
       border-right: 1px dashed #E2DFD8;
       pointer-events: none;
     }
 
-    .label-grid {
+    /* Layout B guide: full width, 0.5in top+bottom margin */
+    .guide-b {
+      position: absolute;
+      left: 0; right: 0;
+      top: 0.5in; bottom: 0.5in;
+      border-top: 1px dashed #E2DFD8;
+      border-bottom: 1px dashed #E2DFD8;
+      pointer-events: none;
+    }
+
+    /* Layout A: 2 col × 10 row, 6.5in × 11in */
+    .label-grid-a {
       width: 6.5in;
       height: 11in;
       display: grid;
       grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(10, 1fr);
+      overflow: hidden;
+    }
+
+    /* Layout B: 3 col × 10 row, 8.5in wide, 10in tall (0.5in margins) */
+    .label-grid-b {
+      width: 8.5in;
+      height: 10in;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(10, 1fr);
       overflow: hidden;
     }
@@ -401,9 +504,15 @@
       }
 
       .page:last-child { page-break-after: avoid; }
-      .guide { display: none; }
+      .guide-a, .guide-b { display: none; }
       .label { border: none; }
       .label .empty { display: none; }
+
+      /* Layout B: center the 10in grid vertically within the 11in page */
+      .label-grid-b {
+        width: 8.5in;
+        height: 10in;
+      }
     }
   </style>
 </head>
@@ -411,13 +520,63 @@
 
   <div class="header">
     <h1>Label Maker</h1>
-    <p>2 col × 10 row · 8.5×11 print · feed 6.5×11 sheet</p>
+    <p>8.5×11 print · feed 6.5×11 sheet</p>
   </div>
 
   <div class="layout">
 
     <div class="settings-col">
       <div class="card">
+
+        <!-- Layout -->
+        <div class="section">
+          <div class="section-label">Layout</div>
+          <div class="layout-pills">
+            <div class="layout-pill active" id="pillA" onclick="setLayout('a')">
+              <div class="pill-radio"></div>
+              <div class="pill-text">
+                <div class="pill-title">2 × 10</div>
+                <div class="pill-sub">6.5×11 · 20 labels</div>
+              </div>
+              <div class="pill-icon">
+                <div class="pill-icon-col">
+                  <div class="pill-icon-cell"></div><div class="pill-icon-cell"></div>
+                  <div class="pill-icon-cell"></div><div class="pill-icon-cell"></div>
+                  <div class="pill-icon-cell"></div>
+                </div>
+                <div class="pill-icon-col">
+                  <div class="pill-icon-cell"></div><div class="pill-icon-cell"></div>
+                  <div class="pill-icon-cell"></div><div class="pill-icon-cell"></div>
+                  <div class="pill-icon-cell"></div>
+                </div>
+              </div>
+            </div>
+            <div class="layout-pill" id="pillB" onclick="setLayout('b')">
+              <div class="pill-radio"></div>
+              <div class="pill-text">
+                <div class="pill-title">3 × 10</div>
+                <div class="pill-sub">8.5×11 · 30 labels</div>
+              </div>
+              <div class="pill-icon">
+                <div class="pill-icon-col">
+                  <div class="pill-icon-cell"></div><div class="pill-icon-cell"></div>
+                  <div class="pill-icon-cell"></div><div class="pill-icon-cell"></div>
+                  <div class="pill-icon-cell"></div>
+                </div>
+                <div class="pill-icon-col">
+                  <div class="pill-icon-cell"></div><div class="pill-icon-cell"></div>
+                  <div class="pill-icon-cell"></div><div class="pill-icon-cell"></div>
+                  <div class="pill-icon-cell"></div>
+                </div>
+                <div class="pill-icon-col">
+                  <div class="pill-icon-cell"></div><div class="pill-icon-cell"></div>
+                  <div class="pill-icon-cell"></div><div class="pill-icon-cell"></div>
+                  <div class="pill-icon-cell"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Content -->
         <div class="section">
@@ -547,15 +706,26 @@
   </div>
 
   <script>
-    // ── Set start date to tomorrow on page load ──
+    let currentLayout = 'a';
+
+    // Set start date to tomorrow on load
     (function setTomorrow() {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const yyyy = tomorrow.getFullYear();
-      const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
-      const dd = String(tomorrow.getDate()).padStart(2, '0');
+      const t = new Date();
+      t.setDate(t.getDate() + 1);
+      const yyyy = t.getFullYear();
+      const mm = String(t.getMonth() + 1).padStart(2, '0');
+      const dd = String(t.getDate()).padStart(2, '0');
       document.getElementById('startDate').value = `${yyyy}-${mm}-${dd}`;
     })();
+
+    function setLayout(l) {
+      currentLayout = l;
+      document.getElementById('pillA').classList.toggle('active', l === 'a');
+      document.getElementById('pillB').classList.toggle('active', l === 'b');
+      initEmpty();
+    }
+
+    function labelsPerSheet() { return currentLayout === 'a' ? 20 : 30; }
 
     function getPreviewWidth() {
       const col = document.querySelector('.preview-col');
@@ -610,7 +780,7 @@
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    function makePage(labelEls) {
+    function makePage(labelEls, layout) {
       const outer = document.createElement('div');
       outer.className = 'page-scaler-outer';
 
@@ -621,11 +791,11 @@
       page.className = 'page';
 
       const guide = document.createElement('div');
-      guide.className = 'guide';
+      guide.className = layout === 'a' ? 'guide-a' : 'guide-b';
       page.appendChild(guide);
 
       const grid = document.createElement('div');
-      grid.className = 'label-grid';
+      grid.className = layout === 'a' ? 'label-grid-a' : 'label-grid-b';
       labelEls.forEach(el => grid.appendChild(el));
       page.appendChild(grid);
 
@@ -657,11 +827,12 @@
         while (isWeekend(cur)) cur.setDate(cur.getDate() + 1);
       }
 
-      const perSheet = 20;
+      const perSheet = labelsPerSheet();
       const total = perSheet * numSheets;
       const container = document.getElementById('sheetsContainer');
       container.innerHTML = '';
 
+      // Build full date sequence across all sheets
       const dates = [];
       let count = 0;
       for (let i = 0; i < total; i++) {
@@ -692,22 +863,29 @@
           els.push(el);
         }
 
-        container.appendChild(makePage(els));
+        container.appendChild(makePage(els, currentLayout));
       }
 
       applyScales();
     }
 
-    // Init empty preview
-    (function() {
+    function initEmpty() {
+      const container = document.getElementById('sheetsContainer');
+      container.innerHTML = '';
+      const perSheet = labelsPerSheet();
       const els = [];
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < perSheet; i++) {
         const el = document.createElement('div');
         el.className = 'label';
         el.innerHTML = `<div class="empty">${i+1}</div>`;
         els.push(el);
       }
-      document.getElementById('sheetsContainer').appendChild(makePage(els));
+      container.appendChild(makePage(els, currentLayout));
+      applyScales();
+    }
+
+    (function() {
+      initEmpty();
       requestAnimationFrame(() => applyScales());
     })();
   </script>
