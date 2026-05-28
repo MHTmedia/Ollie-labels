@@ -33,7 +33,6 @@
       padding: 20px 16px 60px;
     }
 
-    /* ── Header ── */
     .header {
       max-width: 1280px;
       margin: 0 auto 20px;
@@ -52,7 +51,6 @@
       font-family: 'DM Mono', monospace;
     }
 
-    /* ── Two-column layout ── */
     .layout {
       max-width: 1280px;
       margin: 0 auto;
@@ -61,13 +59,11 @@
       gap: 20px;
     }
 
-    /* Settings panel — fixed width */
     .settings-col {
       flex: 0 0 360px;
       min-width: 0;
     }
 
-    /* Preview panel — fills remaining space */
     .preview-col {
       flex: 1 1 0;
       min-width: 0;
@@ -76,14 +72,12 @@
       align-items: center;
     }
 
-    /* On narrow screens, stack vertically */
     @media (max-width: 720px) {
       .layout { flex-direction: column; }
       .settings-col { flex: none; width: 100%; }
       .preview-col { width: 100%; }
     }
 
-    /* ── Card ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -158,7 +152,6 @@
       cursor: pointer;
     }
 
-    /* Stepper */
     .stepper {
       display: flex;
       height: 40px;
@@ -212,7 +205,6 @@
     .stepper input::-webkit-inner-spin-button { -webkit-appearance: none; }
     .stepper input[type=number] { -moz-appearance: textfield; }
 
-    /* Toggle */
     .toggle-field { display: flex; flex-direction: column; gap: 5px; }
 
     .toggle-wrap {
@@ -263,7 +255,6 @@
     .toggle-wrap.on .toggle-knob { background: var(--accent); }
     .toggle-wrap.on .toggle-knob::after { transform: translateX(16px); }
 
-    /* Buttons */
     .btn-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -290,26 +281,21 @@
     .btn-generate { background: var(--accent); color: var(--accent-fg); }
     .btn-print { background: var(--green); color: var(--green-fg); }
 
-    /* ── Preview ── */
-    /* Wrapper that collapses to scaled height */
+    /* Preview */
     .page-scaler-outer {
       width: 100%;
       position: relative;
-      /* height set by JS */
     }
 
-    /* True-size scaler — transforms down to fit preview column */
     .page-scaler {
-      width: 816px;  /* 8.5in @ 96dpi */
-      height: 1056px; /* 11in @ 96dpi */
+      width: 816px;
+      height: 1056px;
       transform-origin: top left;
       position: absolute;
       top: 0;
       left: 0;
-      /* transform set by JS */
     }
 
-    /* True printable page */
     .page {
       width: 8.5in;
       height: 11in;
@@ -378,27 +364,14 @@
       white-space: nowrap;
     }
 
-    /* ── Print ── */
+    /* Print */
     @media print {
       * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
       body { margin: 0; padding: 0; background: white; }
+      .header, .settings-col, .sheet-divider { display: none !important; }
 
-      .header,
-      .settings-col,
-      .sheet-divider { display: none !important; }
-
-      .layout {
-        display: block;
-        max-width: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      .preview-col {
-        display: block;
-        width: 100%;
-      }
+      .layout { display: block; max-width: none; margin: 0; padding: 0; }
+      .preview-col { display: block; width: 100%; }
 
       @page { size: 8.5in 11in; margin: 0; }
 
@@ -443,7 +416,6 @@
 
   <div class="layout">
 
-    <!-- ── Settings ── -->
     <div class="settings-col">
       <div class="card">
 
@@ -466,8 +438,8 @@
               </div>
               <div class="toggle-field">
                 <div class="field-label">All Caps</div>
-                <label class="toggle-wrap" id="twCaps" onclick="tog('allCaps','twCaps')">
-                  <input type="checkbox" id="allCaps" />
+                <label class="toggle-wrap on" id="twCaps" onclick="tog('allCaps','twCaps')">
+                  <input type="checkbox" id="allCaps" checked />
                   <span class="toggle-label">All Caps</span>
                   <div class="toggle-knob"></div>
                 </label>
@@ -480,8 +452,8 @@
             </div>
             <div class="toggle-field">
               <div class="field-label">Bold Date</div>
-              <label class="toggle-wrap" id="twDateBold" onclick="tog('dateBold','twDateBold')">
-                <input type="checkbox" id="dateBold" />
+              <label class="toggle-wrap on" id="twDateBold" onclick="tog('dateBold','twDateBold')">
+                <input type="checkbox" id="dateBold" checked />
                 <span class="toggle-label">Bold</span>
                 <div class="toggle-knob"></div>
               </label>
@@ -544,7 +516,7 @@
                 <div class="field-label">Name Size (pt)</div>
                 <div class="stepper">
                   <button class="stepper-btn" onclick="step('nameSize',-1)">−</button>
-                  <input type="number" id="nameSize" value="13" min="6" max="36" />
+                  <input type="number" id="nameSize" value="15" min="6" max="36" />
                   <button class="stepper-btn" onclick="step('nameSize',1)">+</button>
                 </div>
               </div>
@@ -552,7 +524,7 @@
                 <div class="field-label">Date Size (pt)</div>
                 <div class="stepper">
                   <button class="stepper-btn" onclick="step('dateSize',-1)">−</button>
-                  <input type="number" id="dateSize" value="11" min="6" max="36" />
+                  <input type="number" id="dateSize" value="15" min="6" max="36" />
                   <button class="stepper-btn" onclick="step('dateSize',1)">+</button>
                 </div>
               </div>
@@ -569,12 +541,22 @@
       </div>
     </div>
 
-    <!-- ── Preview ── -->
+    <!-- Preview -->
     <div class="preview-col" id="sheetsContainer"></div>
 
   </div>
 
   <script>
+    // ── Set start date to tomorrow on page load ──
+    (function setTomorrow() {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const yyyy = tomorrow.getFullYear();
+      const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+      const dd = String(tomorrow.getDate()).padStart(2, '0');
+      document.getElementById('startDate').value = `${yyyy}-${mm}-${dd}`;
+    })();
+
     function getPreviewWidth() {
       const col = document.querySelector('.preview-col');
       return col ? col.offsetWidth : 400;
@@ -660,8 +642,8 @@
       const inclWeekends = document.getElementById('inclWeekends').checked;
       const allCaps      = document.getElementById('allCaps').checked;
       const fontFamily   = document.getElementById('fontFamily').value;
-      const nameSize     = parseInt(document.getElementById('nameSize').value) || 13;
-      const dateSize     = parseInt(document.getElementById('dateSize').value) || 11;
+      const nameSize     = parseInt(document.getElementById('nameSize').value) || 15;
+      const dateSize     = parseInt(document.getElementById('dateSize').value) || 15;
       const nameBold     = document.getElementById('nameBold').checked;
       const dateBold     = document.getElementById('dateBold').checked;
 
@@ -726,7 +708,6 @@
         els.push(el);
       }
       document.getElementById('sheetsContainer').appendChild(makePage(els));
-      // Wait for layout to settle before scaling
       requestAnimationFrame(() => applyScales());
     })();
   </script>
